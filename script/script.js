@@ -43,11 +43,17 @@ function createEl() {
 	let npcName = el.classList[0];
 
 	allNPC[npcName] = new Unit(el, npcName, 'aiii');
-	setTimeout(allNPC[npcName].attack, 5000);
+	setTimeout(allNPC[npcName].attack, 3000);
 	myObserver.subscribe(allNPC[npcName].action);
 }
 
 createEl();
+
+
+const hero = document.querySelector('.hero__sprite');
+
 document.addEventListener('click', (e) => {
+	hero.classList.toggle('hero__attack');
+	setTimeout(()=> {hero.classList.toggle('hero__attack')}	, 300);
 	myObserver.broadcast();
 });

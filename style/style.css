@@ -61,20 +61,27 @@ body{
 	right: 0;
 }
 
-.hero{
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 200px;
-	height: 200px;
-	transform: translate(-50%, -50%);
-	background-color: #444;	
-}
-
-
 :root {
 	--pixel-size: 2;
+	--hero-size: 1;
  }
+.hero{
+	position: absolute;
+	top: calc(100% - (275px / 2));
+	left: 50%;
+	width: calc(430px * var(--hero-size));
+	height: calc(275px * var(--hero-size));
+	transform: translate(-50%, -50%);
+	overflow: hidden;
+}
+
+.hero__sprite {
+	position: absolute;
+	height: calc(1100px * var(--hero-size));
+	transform: translate3d(0px, 0px, 0);
+	image-rendering: pixelated;
+}
+
 .character {
 	margin: 0 auto;
 	position: relative;
@@ -89,6 +96,10 @@ body{
 	image-rendering: pixelated;
 }
 
+.hero__attack{
+	animation: hero_attack 300ms steps(4);
+}
+
 .hit{
 	animation: hit_enemy 1s steps(1);
 }
@@ -100,6 +111,16 @@ body{
 .death{
 	animation: death_enemy 1.3s steps(12);
 	animation-fill-mode: forwards;
+}
+
+@keyframes hero_attack {
+	from{
+		transform: translate3d(0px, 0px, 0);
+	}
+
+	to{
+		transform: translate3d(0px, -100%, 0);
+	}
 }
 
 @keyframes move_enemy {
