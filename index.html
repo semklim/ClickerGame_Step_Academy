@@ -5,8 +5,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="./style/style.css">
+	<link rel="preload" href="./sprite/dungeon/1Dun.webp" as="image">
+	<link rel="preload" href="./sprite/hand_swoard_sprite.png" as="image">
 	<script defer src="./script/observer.js"></script>
 	<script defer src="./script/script.js"></script>
+	<!-- <script defer src="./script/preloadIMG.js"></script> -->
 <style>
 	body{
 		width: 100%;
@@ -20,14 +23,16 @@
 	<title>Document</title>
 </head>
 <body>
-<div class="character">
-	<div class="character_hpBar">100<p class="hpBarEnemy"></p></div>
-	<img class="character__enemySpritesheet" src="./sprite/GoblinKing_spritesheet.png" alt="Goblin King">
-</div>
-<div class="hero">
-	<img class="hero__sprite" src="./sprite/hand_swoard_sprite.png" alt="Hero attack">
-</div>
-<div class="hero__hpBar">100<p class="hpBarHero"></p></div>
+	<button class = "muteAll" style="position: absolute; z-index: 1000;">mute</button>
+	<div class="click__count">0</div>
+	<div class="character">
+		<div class="character_hpBar"> <p class="hpBarEnemy"></p></div>
+		<img class="character__enemySpritesheet" src="./sprite/GoblinKing_spritesheet.png" alt="Goblin King">
+	</div>
+	<div class="hero">
+		<img class="hero__sprite" src="./sprite/hand_swoard_sprite.png" alt="Hero attack">
+	</div>
+	<div class="hero__hpBar">100<p class="hpBarHero"></p></div>
 <!-- <canvas id="sprite"></canvas> -->
 </body>
 </html>
