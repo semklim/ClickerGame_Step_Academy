@@ -19,10 +19,10 @@ body{
 	pointer-events: none;
 } */
 :root {
-	--pixel-size: 4;
-	--hero-size: 2;
-	--heroHp-size: 2;
-	--enemyHp-size: 2;
+	--pixel-size: 3;
+	--hero-size: 1.5;
+	--heroHp-size: 1.5;
+	--enemyHp-size: 1.5;
  }
  .click__count{
 	padding: 2px 0;
