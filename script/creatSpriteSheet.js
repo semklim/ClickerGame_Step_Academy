@@ -1,18 +1,18 @@
-var first = 1;  //номерная часть имени первой картинки
-var last  = 6;     //номер последней картинки
-var num   = 1;      //итератор
+let first = 1;  //номерная часть имени первой картинки
+let last  = 6;     //номер последней картинки
+let num   = 1;      //итератор
 
-var maskFileName = ['', '.png'];//маска имени картинки
-var dir = 'sprite/GoblinMove';   //директория, в которой лежат картинки
+const maskFileName = ['', '.png'];//маска имени картинки
+const dir = 'sprite/GoblinMove';   //директория, в которой лежат картинки
 
-var canvas = document.getElementById("sprite"); //выберем наш канвас
+const canvas = document.getElementById("sprite"); //выберем наш канвас
 canvas.width  = last * 230; //задаем ширину, в зависимости от количества
 canvas.height = 190;
-var width = 0;  //переменная, в которую будем записывать сдвиг
-var context = canvas.getContext("2d"); //получаем контекст
+let width = 0;  //переменная, в которую будем записывать сдвиг
+const context = canvas.getContext("2d"); //получаем контекст
 
 function draw() {
-	var img = document.createElement('img'); /* каждый раз при вызове этой функции мы создаем новый обьект-изображение */
+	const img = document.createElement('img'); /* каждый раз при вызове этой функции мы создаем новый обьект-изображение */
 	img.onload = function () {
 			  	//когда изображение загрузится рисуем им на канвасе
 			  	context.drawImage(img, width, 0);
@@ -30,6 +30,6 @@ function draw() {
 draw(); //вызываем функцию впервые
 
 
-canvas.onclick = function () {
+canvas.addEventListener('click',  function () {
     window.location = context.canvas.toDataURL('image/png');
-};
+});
