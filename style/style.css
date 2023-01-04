@@ -20,10 +20,17 @@ body{
 	top: calc(100% - (276px / 2));
 	left: 50%;
 	width: calc(430px * var(--hero-size));
-	height: calc(276px * var(--hero-size));
+	height: calc(270px * var(--hero-size));
 	transform: translate(-50%, -50%);
 	overflow: hidden;
 }
+.hero__sprite {
+	position: absolute;
+	height: calc(1100px * var(--hero-size));
+	transform: translate3d(0px, 0px, 0);
+	image-rendering: pixelated;
+}
+
 .hero__hpBar{
 	padding: 60px 0;
 	position: fixed;
@@ -49,12 +56,6 @@ body{
 	transition: transform 0.5s;
 }
 
-.hero__sprite {
-	position: absolute;
-	height: calc(1100px * var(--hero-size));
-	transform: translate3d(0px, 0px, 0);
-	image-rendering: pixelated;
-}
 
 .character {
 	margin: 0 auto;
