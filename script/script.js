@@ -1,13 +1,12 @@
 'use strict'
 
-
 class Enemy {
 	static stopAttack = null;
 	static isdead = false;
 	constructor(el, name){
 		this.el = el;
 		this.name = name;
-		this.hp = Math.floor(Math.random() * (401 - 200) + 200);
+		this.hp = Math.floor(Math.random() * (ENEMY_MAX_HP - ENEMY_MIN_HP) + ENEMY_MIN_HP);
 		this.sound = new Audio('./sound/smash.mp3');
 		this.sound.volume = 0.2;
 	}
@@ -31,36 +30,36 @@ class Enemy {
 		clearTimeout(Enemy.stopAttack);
 		setTimeout(nextEnemy, 3000)
 	}
+	enemyHpVisualization () {
+		hpEnemyBar.firstChild.textContent = `${this.hp}`;
+		hpEnemyBar.lastChild.setAttribute('style', `width: ${this.hp}px;`);
+	}
 	action = () => {
 		this.hit();
-		this.hp -= 20;
-
+		this.hp -= HERO_ATTACK;
 		if (this.hp <= 0 && !Enemy.isdead) {
 			this.death();	
 		}
-
 		if(this.hp <= 0){
 			hpEnemyBar.lastChild.setAttribute('style', `width: ${this.hp}px;`);
 		}else{
-			hpEnemyBar.firstChild.textContent = `${this.hp}`;
-			hpEnemyBar.lastChild.setAttribute('style', `width: ${this.hp}px;`);
+			this.enemyHpVisualization();
 		}
 	}
 }
 
 class Hero {
-	static stopAttack =null;
 	constructor(el, name){
 		this.el = el;
 		this.name = name;
-		this.hp = 300;
+		this.hp = HERO_HP;
 		this.sound = new Audio('./sound/swordSound.mp3');
 		this.sound.volume = 0.1;
 		this.click_count = 0;
 	}
 	hit = () => {
-		this.hp -= 20;
-		const hp = 300 - this.hp;
+		this.hp -= ENEMY_ATTACK;
+		const hp = HERO_HP - this.hp;
 		hpHeroBar.lastChild.setAttribute('style', `transform: translateY(${hp}px);`)
 		hpHeroBar.firstChild.textContent = `${this.hp}`
 		if (this.hp <= 0) {
@@ -73,7 +72,7 @@ class Hero {
 	}
 	action = () => {
 		this.click_count += 1;
-		clickCount.textContent = this.click_count;
+		clickCount.lastChild.textContent = this.click_count;
 		this.el.classList.toggle('hero__attack');
 		this.sound.play();
 		setTimeout(()=> {this.el.classList.toggle('hero__attack')}, 300);
@@ -83,17 +82,15 @@ class Hero {
 function setBodyBackgroundImg (){
 	const imgForBody = Math.floor(Math.random() * backImg.length);
 	bodyEl.setAttribute('style', `background-image: url(${backImg[imgForBody]});`);
-	console.log(backImg[imgForBody]);
 }
 
 function nextEnemy (){
 	if(hero.hp > 0) {
 	setBodyBackgroundImg();
-	enemy.hp = (Math.floor(Math.random() * (401 - 200) + 200));
+	enemy.hp = (Math.floor(Math.random() * (ENEMY_MAX_HP - ENEMY_MIN_HP) + ENEMY_MIN_HP));
 	Enemy.stopAttack = setTimeout(enemy.attack, 2000);
 	hpEnemyBar.setAttribute('style', '');
-	hpEnemyBar.firstChild.textContent = `${enemy.hp}`;
-	hpEnemyBar.lastChild.setAttribute('style', `width: ${enemy.hp}px;`);
+	enemy.enemyHpVisualization();
 	enemy.el.classList.toggle('death');
 	Enemy.isdead = false;
 	}
@@ -101,18 +98,18 @@ function nextEnemy (){
 
 function CreateEnemy(characterClassName = 'character__enemySpritesheet') {
 	const el = document.querySelector('.' + characterClassName);
-	const enemyNpc = new Enemy(el, characterClassName);
+	const enemy = new Enemy(el, characterClassName);
 
-	Enemy.stopAttack = setTimeout(enemyNpc.attack, 3000);
-	hpEnemyBar.firstChild.textContent = `${enemyNpc.hp}`;
-	hpEnemyBar.lastChild.setAttribute('style', 'width: 200px;');
-	ObserverForClick.subscribe(enemyNpc.action);
-	return enemyNpc;
+	Enemy.stopAttack = setTimeout(enemy.attack, 3000);
+	enemy.enemyHpVisualization();
+	ObserverForClick.subscribe(enemy.action);
+	return enemy;
 }
 
 function CreateHero (heroClassName = 'hero__sprite'){
 	const el = document.querySelector('.' + heroClassName);
 	const hero = new Hero(el, heroClassName);
+
 	hpHeroBar.firstChild.textContent = `${hero.hp}`
 	ObserverForClick.subscribe(hero.action);
 	return hero;
@@ -133,6 +130,11 @@ function muteAllSound() {
 }
 muteAllSound.istrue = false;
 
+const HERO_HP = 225;
+const HERO_ATTACK = 20;
+const ENEMY_ATTACK = 20;
+const ENEMY_MIN_HP = 200;
+const ENEMY_MAX_HP = 400;
 const backImg = [
 	'./sprite/dungeon/1Dun.webp',
 	'./sprite/dungeon/2Dun.webp',
@@ -141,10 +143,6 @@ const backImg = [
 	'./sprite/dungeon/5Dun.webp',
 ];
 const bodyEl = document.querySelector('body');
-const loopSound = new Audio('./sound/loopSound.mp3');
-	loopSound.play();
-	loopSound.volume = 0.4;
-	loopSound.loop = true;
 const clickCount = document.querySelector('.click__count');
 const hpEnemyBar = document.querySelector('.character_hpBar');
 const hpHeroBar = document.querySelector('.hero__hpBar');
@@ -152,12 +150,16 @@ const muteBtn = document.querySelector('.muteAll');
 const ObserverForClick = new Observer();
 const hero = CreateHero();
 const enemy = CreateEnemy();
-
+const loopSound = new Audio('./sound/loopSound.mp3');
+	  loopSound.play();
+	  loopSound.volume = 0.4;
+	  loopSound.loop = true;
 
 document.addEventListener('click', (e) => {
 	if (e.target.className === 'muteAll') {
-		muteAllSound()
-	}else{
+		muteAllSound();
+		e.target.blur();
+	}else if (!Enemy.isdead){
 		ObserverForClick.broadcast();
 	}
 });

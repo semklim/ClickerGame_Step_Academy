@@ -34,8 +34,10 @@ body{
 	color: white;
     border: 5px solid hsl(184deg 12% 77%);
     background-color: #495054;
-	font-size: 50px;
 	text-align: center;
+ }
+ .click__count div{
+	font-size: 35px;
  }
 .hero{
 	position: absolute;
