@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./style/style.css">
+	<link rel="preload" href="./sprite/dungeon/1Dun.webp" as="image">
+	<link rel="preload" href="./sprite/hand_swoard_sprite.png" as="image">
+	<script defer src="./script/observer.js"></script>
+	<script defer src="./script/script.js"></script>
+	<!-- <script defer src="./script/preloadIMG.js"></script> -->
+	<title>Document</title>
+</head>
+<body>
+	<div class="esc__menu">
+		<a class = "button" href="./index.html">Exit</a>
+	</div>
+	<div class = "muteAll"></div>
+	<div class="click__count">Click count<div>0</div></div>
+	<div class="best__score">Best score<div>0</div></div>
+	<div class="flaskaOfHeal"><img class="flaskaOfHeal__bottle" data-position="0" src="./sprite/healing bottle/bottle.png" alt="Healing bottle"></div>
+	<div class="character">
+		<div class="character_hpBar"> <p class="hpBarEnemy"></p></div>
+		<img class="character__enemySpritesheet" src="./sprite/GoblinKing_spritesheet.png" alt="Goblin King">
+	</div>
+	<div class="hero">
+		<img class="hero__sprite" src="./sprite/hand_swoard_sprite.png" alt="Hero attack">
+	</div>
+	<div class="hero__hpBar">0<p class="hpBarHero" data-heroHp="225"></p></div>
+</body>
+</html>

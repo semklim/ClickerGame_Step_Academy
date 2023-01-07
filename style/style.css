@@ -1,3 +1,10 @@
+:root {
+	--pixel-size: 3;
+	--hero-size: 1.5;
+	--heroHp-size: 1.5;
+	--enemyHp-size: 1.5;
+	--flask-size: 0.5;
+ }
 * {
 	padding: 0;
 	margin: 0;
@@ -15,16 +22,10 @@ body{
 	background-repeat: no-repeat;
 	background-size: cover;
 }
- /* :not(body, head, html, button){
+ img{
 	pointer-events: none;
-} */
-:root {
-	--pixel-size: 3;
-	--hero-size: 1.5;
-	--heroHp-size: 1.5;
-	--enemyHp-size: 1.5;
- }
- .click__count{
+}
+ .click__count, .best__score{
 	padding: 2px 0;
 	top: 10px;
 	right: 10px;
@@ -38,6 +39,16 @@ body{
  }
  .click__count div{
 	font-size: 35px;
+ }
+
+ .best__score{
+	top: 100px;
+ }
+
+ .best__score div{
+	font-size: 35px;
+	font-weight: bolder;
+	color:  #ffeb3b;
  }
 .hero{
 	position: absolute;
@@ -59,7 +70,7 @@ body{
 	padding: calc(55px * var(--heroHp-size)) 0;
 	position: fixed;
 	bottom: 2%;
-	right: 2%;
+	right: 40px;
 	width: calc(150px * var(--heroHp-size));
 	height: calc(150px * var(--heroHp-size));
 	border-radius: 50%;
@@ -187,3 +198,82 @@ body{
 		transform: translate3d(-100%, calc(-570px * var(--pixel-size)), 0);
 	}
 }
+
+.muteAll{
+	position: absolute;
+    bottom: 10px;
+    left: 10px;
+	width: 50px;
+	height: 50px;
+	background-image: url('../sprite/muted_icon/yes_sound.png');
+	background-position: center center;
+	background-size: contain;
+	border-radius: 50%;
+}
+
+.muteAll:hover{
+	transform: scale(110%);
+}
+.muteAll:active{
+    transform: translateY(2px);
+}
+
+.esc__menu{
+	margin: 10px;
+	color: #36395A;
+	font-family: "JetBrains Mono",monospace;
+}
+.button {
+	border: 5px solid hsl(184deg 12% 77%);
+    color: white;
+    width: 80px;
+    align-items: center;
+    appearance: none;
+    background-color: #495054;
+    cursor: pointer;
+    display: inline-flex;
+    height: 48px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 18px;
+  }
+  
+  .button:focus {
+	box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  }
+  
+  .button:hover {
+	transform: translateY(-2px);
+  }
+  
+  .button:active {
+	box-shadow: #D6D6E7 0 3px 7px inset;
+	transform: translateY(2px);
+  }
+
+  .flaskaOfHeal{
+	z-index: 5;
+	bottom: 2%;
+	right: 280px;
+	position: absolute;
+	width: calc(270px * var(--flask-size));
+	height: calc(320px * var(--flask-size));
+	overflow: hidden;
+  }
+
+  .flaskaOfHeal img{
+	height: calc(1290px * var(--flask-size));
+  }
