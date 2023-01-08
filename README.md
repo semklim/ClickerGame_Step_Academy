@@ -17,7 +17,8 @@ necessarily:
 - life (or an analogue of its mechanics) for the player
 - attack from the player and enemies (or an analogue of this mechanic)
 - transition between levels
-- first-person element (hand, player's weapon or something like that) with action animations (possible through gif)
+- first-person element (hand, player's weapon or something like that) 
+  with action animations (possible through gif)
 ```
 
 
@@ -26,7 +27,8 @@ necessarily:
 1) Life for enemy and hero.
 2) Bottle that regenerate life of hero.
 3) Regeneration of bottle 4 times only.
-4) Exit btn is save all progress and open menu. In menu btn Continues will be available and can recreate all from savepoint.
+4) Exit btn is save all progress and open menu. 
+   In menu btn Continues will be available and can recreate all from savepoint.
 5) New game btn always save best score and if it muted sound or not.
 ```
 
