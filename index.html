@@ -13,8 +13,8 @@
 			<h1 class="menu__gameName">
 				Clicker Game
 			</h1>
-			<div class="menu__btn continuos">
-				<a class = "button" href="./game.html">Continuos</a>
+			<div class="menu__btn continue">
+				<a class = "button" href="./game.html">Continues</a>
 			</div>
 			<div class="menu__btn start">
 				<a class = "button" onclick="newGame()" href="./game.html">New game</a>
@@ -43,12 +43,12 @@
 
 	</div>
 	<script>
-		const btnContinuos = document.querySelector('.continuos');
+		const btncontinue = document.querySelector('.continue');
 		const triger = localStorage.getItem('is_new_game');
 		if (triger === 'true' || triger === null) {
-			btnContinuos.setAttribute('style', 'pointer-events: none;');
-			btnContinuos.children[0].setAttribute('href', '');
-			btnContinuos.children[0].classList.add('disable');
+			btncontinue.setAttribute('style', 'pointer-events: none;');
+			btncontinue.children[0].setAttribute('href', '');
+			btncontinue.children[0].classList.add('disable');
 		}
 		function newGame(){
 			const mute = localStorage.getItem('mute') === null ? true : localStorage.getItem('mute'); 
