@@ -108,6 +108,7 @@ class Hero {
 		}else{
 			lvlUpBox.remove();
 			CreateLvlUpBox.isCreated = false;
+			Clicks_FOR_LVLUP += 50;
 		}
 	}
 

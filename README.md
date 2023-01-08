@@ -30,6 +30,7 @@ necessarily:
 4) Exit btn is save all progress and open menu. 
    In menu btn Continues will be available and can recreate all from savepoint.
 5) New game btn always save best score and if it muted sound or not.
+6) Increase hero attack after first 50 click and all next increase after 100 click. 
 ```
 
 
