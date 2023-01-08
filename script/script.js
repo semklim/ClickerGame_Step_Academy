@@ -9,6 +9,7 @@ class Enemy {
 		this.hp = Math.floor(Math.random() * (ENEMY_MAX_HP - ENEMY_MIN_HP) + ENEMY_MIN_HP);
 		this.sound = new Audio('./sound/smash.mp3');
 		this.sound.volume = 0.2;
+		this.percent_minus_in_hp_bar = Math.ceil(ENEMY_HP * (HERO_ATTACK / this.hp));
 	}
 	attack = () => {
 		this.el.classList.toggle('attack');
@@ -22,6 +23,7 @@ class Enemy {
 		setTimeout(()=>this.el.classList.toggle('hit'), 200);
 	}
 	death () {
+		ENEMY_HP = SET_ENEMY_HP;
 		Enemy.isdead = true;
 		this.hit();
 		this.el.classList.add('death');
@@ -34,7 +36,7 @@ class Enemy {
 	enemyHpVisualization () {
 		if(this.hp > 0){
 		hpEnemyBar.firstChild.textContent = `${this.hp}`;
-		hpEnemyBar.lastChild.setAttribute('style', `width: ${this.hp}px;`);
+		hpEnemyBar.lastChild.setAttribute('style', `width: ${ENEMY_HP}px;`);
 		}else{
 			this.death();
 		}
@@ -43,6 +45,7 @@ class Enemy {
 		if (!Hero.isdead) {
 			this.hit();
 			this.hp -= HERO_ATTACK;
+			ENEMY_HP -= this.percent_minus_in_hp_bar;
 			if (this.hp <= 0 && !Enemy.isdead) {
 				this.death();	
 			}
@@ -90,6 +93,24 @@ class Hero {
 		hpHeroBar.firstChild.textContent = `${this.hp}`;
 	  }
 
+	 increaseAttack (el){
+		 const lvlUpBox = document.querySelector('.lvlUp');
+		if (el.value === 'true') {
+			HERO_ATTACK += 20;
+			ENEMY_ATTACK += 15;
+			ENEMY_MIN_HP += 200;
+			ENEMY_MAX_HP += 300;
+			// console.log('HERO_ATTACK = ' + HERO_ATTACK +'\n' + 'ENEMY_ATTACK =' + ENEMY_ATTACK);
+			enemy.percent_minus_in_hp_bar = Math.ceil(ENEMY_HP * (HERO_ATTACK / this.hp));
+			lvlUpBox.remove();
+			CreateLvlUpBox.isCreated = false;
+			Clicks_FOR_LVLUP += 100;
+		}else{
+			lvlUpBox.remove();
+			CreateLvlUpBox.isCreated = false;
+		}
+	}
+
 	action = () => {
 		if (!Hero.isdead) {
 			this.click_count += 1;
@@ -97,25 +118,11 @@ class Hero {
 			this.el.classList.toggle('hero__attack');
 			this.sound.play();
 			setTimeout(()=> {this.el.classList.toggle('hero__attack')}, 300);
+			if(this.click_count > Clicks_FOR_LVLUP && !CreateLvlUpBox.isCreated){
+			CreateLvlUpBox();
+			CreateLvlUpBox.isCreated = true;
+			}
 		}
-	}
-}
-
-
-function setBodyBackgroundImg (){
-	const imgForBody = Math.floor(Math.random() * backImg.length);
-	bodyEl.setAttribute('style', `background-image: url(${backImg[imgForBody]});`);
-}
-
-function nextEnemy (){
-	if(hero.hp > 0) {
-	setBodyBackgroundImg();
-	enemy.hp = (Math.floor(Math.random() * (ENEMY_MAX_HP - ENEMY_MIN_HP) + ENEMY_MIN_HP));
-	enemy.enemyHpVisualization();
-	enemy.el.classList.toggle('death');
-	hpEnemyBar.setAttribute('style', '');
-	Enemy.stopAttack = setTimeout(enemy.attack, 2000);
-	Enemy.isdead = false;
 	}
 }
 
@@ -136,6 +143,44 @@ function CreateHero (heroClassName = 'hero__sprite'){
 	hpHeroBar.firstChild.textContent = `${hero.hp}`
 	ObserverForClick.subscribe(hero.action);
 	return hero;
+}
+
+function CreateLvlUpBox() {
+	const body = document.body;
+	const lvlUpBox = document.createElement('div');
+	const btn1 = document.createElement('button');
+	const btn2 = document.createElement('button');
+	lvlUpBox.classList.add('lvlUp');
+	btn1.classList.add('yes_lvlup');
+	btn2.classList.add('no_lvlup');
+	btn1.classList.add('button');
+	btn2.classList.add('button');
+	btn1.setAttribute('value', 'true');
+	btn2.setAttribute('value', 'false');
+	btn1.textContent = 'yes';
+	btn2.textContent = 'no';
+	lvlUpBox.textContent = 'Increase attack?';
+	lvlUpBox.append(btn1, btn2);
+	body.append(lvlUpBox);
+}
+CreateLvlUpBox.isCreated = false;
+
+function setBodyBackgroundImg (){
+	const imgForBody = Math.floor(Math.random() * backImg.length);
+	bodyEl.setAttribute('style', `background-image: url(${backImg[imgForBody]});`);
+}
+
+function nextEnemy (){
+	if(hero.hp > 0) {
+	setBodyBackgroundImg();
+	enemy.hp = (Math.floor(Math.random() * (ENEMY_MAX_HP - ENEMY_MIN_HP) + ENEMY_MIN_HP));
+	enemy.percent_minus_in_hp_bar = Math.ceil(ENEMY_HP * (HERO_ATTACK / enemy.hp));
+	enemy.enemyHpVisualization();
+	enemy.el.classList.toggle('death');
+	hpEnemyBar.setAttribute('style', '');
+	Enemy.stopAttack = setTimeout(enemy.attack, 2000);
+	Enemy.isdead = false;
+	}
 }
 
 function muteAllSound() {
@@ -182,30 +227,45 @@ function regenBottleHealing(){
   }
 
  function init(){
-	const best_score = document.querySelector('.best__score').lastChild;
-	const heroLocal = JSON.parse(localStorage.getItem('hero'));
-	const enemyHp = JSON.parse(localStorage.getItem('enemyhp'));
-	const isMute = JSON.parse(localStorage.getItem('mute'));
-	const bestTry = JSON.parse(localStorage.getItem('best_try'));
-	const regenCount = JSON.parse(localStorage.getItem('regen_bottle_count'));
-	const position = localStorage.getItem('bottle');
-	MUTE_ALL = isMute;
-	muteAllSound();
+	if (localStorage.getItem('is_new_game') === 'false') {
+		const best_score = document.querySelector('.best__score').lastChild;
+		const heroLocal = JSON.parse(localStorage.getItem('hero'));
+		const enemyHp = JSON.parse(localStorage.getItem('enemyhp'));
+		const isMute = JSON.parse(localStorage.getItem('mute'));
+		const bestTry = JSON.parse(localStorage.getItem('best_try'));
+		const regenCount = JSON.parse(localStorage.getItem('regen_bottle_count'));
+		const position = localStorage.getItem('bottle');
 
-if (best_score.textContent < bestTry) {
-	best_score.lastChild.textContent = bestTry || 0;
-}
-
-hero.hp = heroLocal.hp;
-hero.click_count = heroLocal.click_count;
-clickCount.lastChild.textContent = hero.click_count;
-hero.heroHpVisualization();
-
-regenBottleHealing.count = regenCount;
-flask.setAttribute('style', `transform: translateY(${position}px)`);
-
-enemy.hp = enemyHp;
-enemy.enemyHpVisualization();
+		HERO_ATTACK = JSON.parse(localStorage.getItem('hero_attack'));
+		ENEMY_ATTACK = JSON.parse(localStorage.getItem('enemy_attack'));
+		ENEMY_MIN_HP = JSON.parse(localStorage.getItem('enemy_min_hp'));
+		ENEMY_MAX_HP = JSON.parse(localStorage.getItem('enemy_max_hp'));
+		Clicks_FOR_LVLUP = JSON.parse(localStorage.getItem('clicks_for_lvlup'));
+		CreateLvlUpBox.isCreated = JSON.parse(localStorage.getItem('lvlup_box_iscreated'));
+		
+		MUTE_ALL = isMute;
+		muteAllSound();
+	
+		if (best_score.textContent < bestTry) {
+			best_score.lastChild.textContent = bestTry || 0;
+		}
+		
+		hero.hp = heroLocal.hp;
+		hero.click_count = heroLocal.click_count;
+		clickCount.lastChild.textContent = hero.click_count;
+		hero.heroHpVisualization();
+		
+		regenBottleHealing.count = regenCount;
+		flask.setAttribute('style', `transform: translateY(${position}px)`);
+		
+		enemy.hp = enemyHp;
+		enemy.enemyHpVisualization();
+	}else{
+		BEST_SCORE = localStorage.getItem('best_try') || 0;
+		best_score.textContent = BEST_SCORE;
+		MUTE_ALL = JSON.parse(localStorage.getItem('mute'));
+		muteAllSound();
+	}
  }
 
 
@@ -241,6 +301,12 @@ function storeData(){
 	localStorage.setItem('mute', JSON.stringify(!MUTE_ALL));
 	localStorage.setItem('regen_bottle_count', JSON.stringify(regenBottleHealing.count));
 	localStorage.setItem('bottle', bottleData);
+	localStorage.setItem('hero_attack',JSON.stringify(HERO_ATTACK));
+	localStorage.setItem('enemy_attack',JSON.stringify(ENEMY_ATTACK));
+	localStorage.setItem('enemy_min_hp',JSON.stringify(ENEMY_MIN_HP));
+	localStorage.setItem('enemy_max_hp',JSON.stringify(ENEMY_MAX_HP));
+	localStorage.setItem('clicks_for_lvlup',JSON.stringify(Clicks_FOR_LVLUP));
+	localStorage.setItem('lvlup_box_iscreated',JSON.stringify(CreateLvlUpBox.isCreated));
 }
 
 function clearData(){
@@ -252,12 +318,15 @@ function clearData(){
 
 
 const HERO_HP = 225;
-const HERO_ATTACK = 20;
-const ENEMY_ATTACK = 20;
-const ENEMY_MIN_HP = 200;
-const ENEMY_MAX_HP = 400;
+const SET_ENEMY_HP = 300;
+let ENEMY_MIN_HP = 300;
+let ENEMY_MAX_HP = 400;
+let HERO_ATTACK = 20;
+let ENEMY_ATTACK = 20;
+let ENEMY_HP = 300;
 let BEST_SCORE = 0;
 let MUTE_ALL = true;
+let Clicks_FOR_LVLUP = 50;
 const backImg = [
 	'./sprite/dungeon/1Dun.webp',
 	'./sprite/dungeon/2Dun.webp',
@@ -281,18 +350,14 @@ const loopSound = new Audio('./sound/loopSound.mp3');
 	  loopSound.loop = true;
 const best_score = document.querySelector('.best__score').lastChild;
 	  best_score.textContent = BEST_SCORE;
+	
 
-	if (localStorage.getItem('is_new_game') === 'false') {
-		init();
-	}else{
-		BEST_SCORE = localStorage.getItem('best_try') || 0;
-		best_score.textContent = BEST_SCORE;
-		MUTE_ALL = JSON.parse(localStorage.getItem('mute'));
-		muteAllSound();
-	}
+	init();
 
 document.addEventListener('click', (e) => {
-	if (e.target.className === 'exitBtn'){
+	if(e.target.className.includes('button')){
+		hero.increaseAttack(e.target);
+	}else if (e.target.className === 'exitBtn'){
 		storeData();
 	}else if (e.target.className === 'flaskaOfHeal') {
 		healingHeroBottle();
