@@ -14,10 +14,10 @@
 				Clicker Game
 			</h1>
 			<div class="menu__btn continuos">
-				<a class = "button" href="">Continuos</a>
+				<a class = "button" href="./game.html">Continuos</a>
 			</div>
 			<div class="menu__btn start">
-				<a class = "button" href="./game.html">New game</a>
+				<a class = "button" onclick="newGame()" href="./game.html">New game</a>
 			</div>
 		</div>
 		<details class="infoBar">
@@ -29,18 +29,35 @@
 				<br>
 				<ul>
 					<li>
-						For attack enemy use left click of mouse or press Enter.
+						For attack enemy use left click of mouse or press Space.
 					</li>
 					<li>
-						For mute sound press M on the keyboard or use button.
+						For mute sound press button M on the keyboard or use button.
 					</li>
 					<li>
-						For healing use space on the keyboard or use bottle.
+						For healing use button H on the keyboard or use bottle.
 					</li>
 				</ul>
 			</ul>
 		</details>
 
 	</div>
+	<script>
+		const btnContinuos = document.querySelector('.continuos');
+		const triger = localStorage.getItem('is_new_game');
+		if (triger === 'true' || triger === null) {
+			btnContinuos.setAttribute('style', 'pointer-events: none;');
+			btnContinuos.children[0].setAttribute('href', '');
+			btnContinuos.children[0].classList.add('disable');
+		}
+		function newGame(){
+			const mute = localStorage.getItem('mute') === null ? true : localStorage.getItem('mute'); 
+			const best_try = localStorage.getItem('best_try') || 0;
+			localStorage.clear();
+			localStorage.setItem('is_new_game', 'true');
+			localStorage.setItem('best_try', best_try);
+			localStorage.setItem('mute', mute);
+		}
+	</script>
 </body>
 </html>

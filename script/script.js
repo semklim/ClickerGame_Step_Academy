@@ -26,13 +26,18 @@ class Enemy {
 		this.hit();
 		this.el.classList.add('death');
 		hpEnemyBar.firstChild.textContent = '';
+		hpEnemyBar.lastChild.setAttribute('style', '');
 		hpEnemyBar.setAttribute('style', 'border: 0px');
 		clearTimeout(Enemy.stopAttack);
 		setTimeout(nextEnemy, 3000)
 	}
 	enemyHpVisualization () {
+		if(this.hp > 0){
 		hpEnemyBar.firstChild.textContent = `${this.hp}`;
 		hpEnemyBar.lastChild.setAttribute('style', `width: ${this.hp}px;`);
+		}else{
+			this.death();
+		}
 	}
 	action = () => {
 		if (!Hero.isdead) {
@@ -61,8 +66,8 @@ class Hero {
 		this.click_count = 0;
 	}
 	hit = () => {
-		const attack = -1 * ENEMY_ATTACK;
-		this.heroHpVisualization(attack);
+		this.heroHpVisualization((-1 * ENEMY_ATTACK));
+		hpHeroBar.lastChild.dataset.heroHp = this.hp;
 		if (this.hp <= 0) {
 			hpHeroBar.firstChild.textContent = '';
 			hpHeroBar.style.border = '0px';
@@ -70,11 +75,15 @@ class Hero {
 		}
 	}
 	death () {
+		if(BEST_SCORE < this.click_count){
+			localStorage.setItem('best_try', `${JSON.stringify(this.click_count)}`);
+		}
 		Hero.isdead = true;
 		clearTimeout(Enemy.stopAttack);
+		setTimeout(endGameWindow, 1000);
 	}
 
-	heroHpVisualization (translate) {
+	heroHpVisualization (translate = 0) {
 		this.hp = hero.hp + translate <= HERO_HP ? this.hp + translate : HERO_HP;
 		translate = (HERO_HP - this.hp);
 		hpHeroBar.lastChild.setAttribute('style', `transform: translateY(${translate}px);`);
@@ -91,6 +100,7 @@ class Hero {
 		}
 	}
 }
+
 
 function setBodyBackgroundImg (){
 	const imgForBody = Math.floor(Math.random() * backImg.length);
@@ -159,10 +169,10 @@ function regenBottleHealing(){
   regenBottleHealing.count = 0;
 
   function healingHeroBottle() {
-	if (!Hero.isdead) {
-		const position = parseInt(flask.getAttribute('data-position')) - 160;
+	let position = parseInt(flask.getAttribute('data-position'))
+	if (!Hero.isdead && position > -480) {
+		position -= 160;
 		const heal = 50;
-
 		clearTimeout(regenFlask);
 		flask.setAttribute('style', `transform: translateY(${position}px)`);
 		hero.heroHpVisualization(heal);
@@ -171,12 +181,83 @@ function regenBottleHealing(){
 	}
   }
 
+ function init(){
+	const best_score = document.querySelector('.best__score').lastChild;
+	const heroLocal = JSON.parse(localStorage.getItem('hero'));
+	const enemyHp = JSON.parse(localStorage.getItem('enemyhp'));
+	const isMute = JSON.parse(localStorage.getItem('mute'));
+	const bestTry = JSON.parse(localStorage.getItem('best_try'));
+	const regenCount = JSON.parse(localStorage.getItem('regen_bottle_count'));
+	const position = localStorage.getItem('bottle');
+	MUTE_ALL = isMute;
+	muteAllSound();
+
+if (best_score.textContent < bestTry) {
+	best_score.lastChild.textContent = bestTry || 0;
+}
+
+hero.hp = heroLocal.hp;
+hero.click_count = heroLocal.click_count;
+clickCount.lastChild.textContent = hero.click_count;
+hero.heroHpVisualization();
+
+regenBottleHealing.count = regenCount;
+flask.setAttribute('style', `transform: translateY(${position}px)`);
+
+enemy.hp = enemyHp;
+enemy.enemyHpVisualization();
+ }
+
+
+ function endGameWindow(){
+	clearData();
+	const body = document.querySelector('body');
+	body.setAttribute('style', 'background-image: none;');
+	body.innerHTML= `	<div class="container">
+	<div class="menu">
+		<div class="menu__btn">
+			<a class = "button" href="./index.html">Menu</a>
+		</div>
+	</div>
+	<details style = "text-align: center; font-size: 18px;">
+		<summary>Your score</summary>
+				${hero.click_count}
+	</details>
+</div>`
+	localStorage.setItem('is_new_game', 'true');
+ }
+
+
+function storeData(){
+	const best_try = localStorage.getItem('best_try') || 0;
+	const bottleData = flask.getAttribute('data-position');
+	const hero__hpBar = hpHeroBar.lastChild.getAttribute('data-hero-hp');
+	localStorage.clear();
+	localStorage.setItem('is_new_game', 'false');
+	localStorage.setItem('best_try', best_try);
+	localStorage.setItem('enemyhp', JSON.stringify(enemy.hp));
+	localStorage.setItem('hero', JSON.stringify(hero));
+	localStorage.setItem('hero_bar_data', hero__hpBar);
+	localStorage.setItem('mute', JSON.stringify(!MUTE_ALL));
+	localStorage.setItem('regen_bottle_count', JSON.stringify(regenBottleHealing.count));
+	localStorage.setItem('bottle', bottleData);
+}
+
+function clearData(){
+	const best_try = localStorage.getItem('best_try');
+	localStorage.clear();
+	localStorage.setItem('best_try', `${best_try}`);
+	localStorage.setItem('mute', JSON.stringify(!MUTE_ALL));
+}
+
+
 const HERO_HP = 225;
 const HERO_ATTACK = 20;
 const ENEMY_ATTACK = 20;
 const ENEMY_MIN_HP = 200;
 const ENEMY_MAX_HP = 400;
-let MUTE_ALL = false;
+let BEST_SCORE = 0;
+let MUTE_ALL = true;
 const backImg = [
 	'./sprite/dungeon/1Dun.webp',
 	'./sprite/dungeon/2Dun.webp',
@@ -198,13 +279,21 @@ const loopSound = new Audio('./sound/loopSound.mp3');
 	  loopSound.play();
 	  loopSound.volume = 0.4;
 	  loopSound.loop = true;
+const best_score = document.querySelector('.best__score').lastChild;
+	  best_score.textContent = BEST_SCORE;
+
+	if (localStorage.getItem('is_new_game') === 'false') {
+		init();
+	}else{
+		BEST_SCORE = localStorage.getItem('best_try') || 0;
+		best_score.textContent = BEST_SCORE;
+		MUTE_ALL = JSON.parse(localStorage.getItem('mute'));
+		muteAllSound();
+	}
 
 document.addEventListener('click', (e) => {
-	if (e.target.className === 'button'){
-		localStorage.clear();
-		localStorage.setItem('enemyhp', JSON.stringify(enemy.hp));
-		localStorage.setItem('hero', JSON.stringify(hero));
-		localStorage.setItem('mute', JSON.stringify(!MUTE_ALL));
+	if (e.target.className === 'exitBtn'){
+		storeData();
 	}else if (e.target.className === 'flaskaOfHeal') {
 		healingHeroBottle();
 	}else{
